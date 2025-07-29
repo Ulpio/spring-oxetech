@@ -1,0 +1,101 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+
+# Build e diretórios do Spring Boot
+/target/
+/build/
+
+# Arquivos de log
+*.log
+
+# Arquivos temporários do sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs e editores
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# Arquivos do Maven
+.mvn/
+!**/src/**/.mvn/wrapper/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Arquivos do Gradle
+.gradle
+build/
+!gradle-wrapper.jar
+gradle-app.setting
+
+# Arquivos de ambiente
+.env
+*.env
+*.local
+*.properties.local
+application-*.yml
+application-*.yaml
+application-*.properties
+
+# Testes e relatórios
+/test-output/
+/jacoco.exec
+*.hprof
+
+# Arquivos de cache
+*.class
+*.jar
+*.war
+*.ear
+
+# Outros
+nohup.out
+*.swp
+*.swo
+
