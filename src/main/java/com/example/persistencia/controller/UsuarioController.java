@@ -2,9 +2,12 @@ package com.example.persistencia.controller;
 
 import com.example.persistencia.model.Usuario;
 import com.example.persistencia.repository.UsuarioRepository;
+import jakarta.validation.Valid;
+import jdk.javadoc.doclet.Reporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,24 +17,71 @@ import java.util.List;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository userrepo;
+    private UsuarioRepository userRepo;
 
     @PostMapping
-    public ResponseEntity<Usuario> criar(@RequestBody Usuario user){
-        Usuario salvo = userrepo.save(user);
+    public ResponseEntity<?> criar(@Valid @RequestBody Usuario user, BindingResult result){
+        if (result.hasErrors()){
+            List<String> erros = result.getFieldErrors().stream()
+                    .map(err -> err.getField() + ":" + err.getDefaultMessage())
+                    .toList();
+            return ResponseEntity.badRequest().body(erros);
+        }
+        Usuario salvo = userRepo.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @GetMapping
     public List<Usuario> listar(){
-        return userrepo.findAll();
+        return userRepo.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> listarPorID(@PathVariable Long id){
-        return userrepo.findById(id)
+        return userRepo.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    //PUT
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id,@RequestBody Usuario usuarioAtualizado){
+        return userRepo.findById(id)
+                .map(usuarioExistente -> {
+                    usuarioExistente.setNome(usuarioAtualizado.getNome());
+                    usuarioExistente.setEmail(usuarioAtualizado.getEmail());
+
+                    Usuario atualizado = userRepo.save(usuarioExistente);
+                    return ResponseEntity.ok(atualizado);
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+    //PATCH -> Atualizar parcial
+    @PatchMapping("/{id}")
+    public ResponseEntity<Usuario> patchUsuario(@PathVariable Long id,@RequestBody Usuario dadosParciais){
+        return userRepo.findById(id)
+                .map(usuarioExistente -> {
+                    if (dadosParciais.getNome() != null)
+                        usuarioExistente.setNome(dadosParciais.getNome());
+                    if (dadosParciais.getEmail() != null)
+                        usuarioExistente.setEmail(dadosParciais.getEmail());
+
+                    Usuario atualizado = userRepo.save(usuarioExistente);
+                    return ResponseEntity.ok(atualizado);
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+
+    }
+
+    //DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Usuario> deletar(@PathVariable Long id){
+        return userRepo.findById(id)
+                .<ResponseEntity>map(usuario -> {
+                    userRepo.delete(usuario);
+                    return ResponseEntity.noContent().build(); // 204 NO content
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build()); // 404
     }
 
 }
