@@ -14,24 +14,28 @@ import java.util.List;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository userrepo;
+    private UsuarioRepository userRepo;
 
     @PostMapping
     public ResponseEntity<Usuario> criar(@RequestBody Usuario user){
-        Usuario salvo = userrepo.save(user);
+        Usuario salvo = userRepo.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @GetMapping
     public List<Usuario> listar(){
-        return userrepo.findAll();
+        return userRepo.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> listarPorID(@PathVariable Long id){
-        return userrepo.findById(id)
+        return userRepo.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    //PUT
+
+    //DELETE
 
 }
