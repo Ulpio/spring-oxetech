@@ -2,6 +2,7 @@ package com.example.persistencia.controller;
 
 import com.example.persistencia.model.Usuario;
 import com.example.persistencia.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jdk.javadoc.doclet.Reporter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,9 @@ public class UsuarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> listarPorID(@PathVariable Long id){
-        return userRepo.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Usuario usuario = userRepo.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+        return ResponseEntity.ok(usuario);
     }
 
     //PUT
