@@ -1,15 +1,15 @@
 package com.example.persistencia.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = "cpf"),
+        @UniqueConstraint(columnNames = "email")})
 public class Usuario {
 
     @Id
