@@ -6,6 +6,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jdk.javadoc.doclet.Reporter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -33,8 +35,21 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<Usuario> listar(){
-        return userRepo.findAll();
+    public Page<Usuario> listar(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String email,
+            Pageable pageable)
+    {
+        if (nome != null && email != null){
+            return userRepo.findByNomeContainingIgnoreCaseAndEmailContainingIgnoreCase(nome,email,pageable);
+        }
+        if (nome != null){
+            return  userRepo.findByNomeContainingIgnoreCase(nome,pageable);
+        }
+        if (email != null){
+            return userRepo.findByEmailContainingIgnoreCase(email,pageable);
+        }
+        return userRepo.findAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -55,7 +70,7 @@ public class UsuarioController {
                     Usuario atualizado = userRepo.save(usuarioExistente);
                     return ResponseEntity.ok(atualizado);
                 })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .orElseThrow(EntityNotFoundException::new);
     }
     //PATCH -> Atualizar parcial
     @PatchMapping("/{id}")
@@ -76,9 +91,9 @@ public class UsuarioController {
 
     //DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Usuario> deletar(@PathVariable Long id){
+    public ResponseEntity<?> deletar(@PathVariable Long id){
         return userRepo.findById(id)
-                .<ResponseEntity>map(usuario -> {
+                .map(usuario -> {
                     userRepo.delete(usuario);
                     return ResponseEntity.noContent().build(); // 204 NO content
                 })
