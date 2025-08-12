@@ -1,7 +1,10 @@
 package com.example.persistencia.controller;
 
+import com.example.persistencia.dto.usuario.UsuarioDTO;
+import com.example.persistencia.dto.usuario.UsuarioInputDTO;
 import com.example.persistencia.model.Usuario;
 import com.example.persistencia.repository.UsuarioRepository;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jdk.javadoc.doclet.Reporter;
@@ -18,86 +21,44 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
+    private final UsuarioRepository repository;
 
-    @Autowired
-    private UsuarioRepository userRepo;
+    public UsuarioController(UsuarioRepository repository){
+        this.repository = repository;
+    }
 
     @PostMapping
-    public ResponseEntity<?> criar(@Valid @RequestBody Usuario user, BindingResult result){
-        if (result.hasErrors()){
-            List<String> erros = result.getFieldErrors().stream()
-                    .map(err -> err.getField() + ":" + err.getDefaultMessage())
-                    .toList();
-            return ResponseEntity.badRequest().body(erros);
+    public ResponseEntity<?>criar(@Valid @RequestBody UsuarioInputDTO dto){
+        if (repository.existsByEmail(dto.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("email ja cadastrado");
         }
-        Usuario salvo = userRepo.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+        if (repository.existsByCpf(dto.getCpf())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("cpf ja cadastrado");
+        }
+
+        Usuario u = new Usuario();
+        u.setNome(dto.getNome());
+        u.setEmail(dto.getEmail());
+        u.setCpf(dto.getCpf());
+        u.setDataNascimento(dto.getDataNascimento());
+        Usuario salvo = repository.save(u);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioDTO(salvo));
     }
 
     @GetMapping
-    public Page<Usuario> listar(
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String email,
-            Pageable pageable)
-    {
-        if (nome != null && email != null){
-            return userRepo.findByNomeContainingIgnoreCaseAndEmailContainingIgnoreCase(nome,email,pageable);
-        }
-        if (nome != null){
-            return  userRepo.findByNomeContainingIgnoreCase(nome,pageable);
-        }
-        if (email != null){
-            return userRepo.findByEmailContainingIgnoreCase(email,pageable);
-        }
-        return userRepo.findAll(pageable);
+    public Page<UsuarioDTO> listar(@RequestParam(required = false)String nome,Pageable pageable){
+        Page<Usuario> page = (nome == null || nome.isBlank())
+            ?repository.findAll(pageable)
+            :repository.findByNomeContainingIgnoreCase(nome,pageable);
+        return page.map(UsuarioDTO::new);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> listarPorID(@PathVariable Long id){
-        Usuario usuario = userRepo.findById(id)
-                .orElseThrow(EntityNotFoundException::new);
-        return ResponseEntity.ok(usuario);
+    @GetMapping("{/id}")
+    public ResponseEntity<?> buscarPorID(@PathVariable Long id){
+        return repository.findById(id)
+                .<ResponseEntity>map(u -> ResponseEntity.ok(new UsuarioDTO(u)))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("usuario não encontrado"));
     }
-
-    //PUT
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id,@RequestBody Usuario usuarioAtualizado){
-        return userRepo.findById(id)
-                .map(usuarioExistente -> {
-                    usuarioExistente.setNome(usuarioAtualizado.getNome());
-                    usuarioExistente.setEmail(usuarioAtualizado.getEmail());
-
-                    Usuario atualizado = userRepo.save(usuarioExistente);
-                    return ResponseEntity.ok(atualizado);
-                })
-                .orElseThrow(EntityNotFoundException::new);
-    }
-    //PATCH -> Atualizar parcial
-    @PatchMapping("/{id}")
-    public ResponseEntity<Usuario> patchUsuario(@PathVariable Long id,@RequestBody Usuario dadosParciais){
-        return userRepo.findById(id)
-                .map(usuarioExistente -> {
-                    if (dadosParciais.getNome() != null)
-                        usuarioExistente.setNome(dadosParciais.getNome());
-                    if (dadosParciais.getEmail() != null)
-                        usuarioExistente.setEmail(dadosParciais.getEmail());
-
-                    Usuario atualizado = userRepo.save(usuarioExistente);
-                    return ResponseEntity.ok(atualizado);
-                })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-
-    }
-
-    //DELETE
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Long id){
-        return userRepo.findById(id)
-                .map(usuario -> {
-                    userRepo.delete(usuario);
-                    return ResponseEntity.noContent().build(); // 204 NO content
-                })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build()); // 404
-    }
-
 }
