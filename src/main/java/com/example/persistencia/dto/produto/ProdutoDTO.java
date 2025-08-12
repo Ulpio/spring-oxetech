@@ -1,7 +1,6 @@
 package com.example.persistencia.dto.produto;
 
 import com.example.persistencia.model.Produto;
-import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 

@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public interface ProdutoRepository extends JpaRepository<Produto,Long> {
     Page<Produto> findByNomeContainingIgnoreCase(String nome, Pageable pageable);

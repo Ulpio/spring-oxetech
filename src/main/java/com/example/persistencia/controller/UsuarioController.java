@@ -4,19 +4,12 @@ import com.example.persistencia.dto.usuario.UsuarioDTO;
 import com.example.persistencia.dto.usuario.UsuarioInputDTO;
 import com.example.persistencia.model.Usuario;
 import com.example.persistencia.repository.UsuarioRepository;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jdk.javadoc.doclet.Reporter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")

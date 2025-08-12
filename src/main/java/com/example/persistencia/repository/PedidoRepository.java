@@ -1,6 +1,5 @@
 package com.example.persistencia.repository;
 
-import com.example.persistencia.model.Categoria;
 import com.example.persistencia.model.Pedido;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
