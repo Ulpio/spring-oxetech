@@ -3,7 +3,7 @@ package com.example.persistencia.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 @Entity
 public class Produto {
@@ -15,7 +15,7 @@ public class Produto {
     @Size(min = 3,max = 100)
     private String nome;
     @Positive
-    private BigInteger preco;
+    private BigDecimal preco;
     @PositiveOrZero
     private Integer quantidade;
 
@@ -41,11 +41,11 @@ public class Produto {
         this.nome = nome;
     }
 
-    public @Positive BigInteger getPreco() {
+    public @Positive BigDecimal getPreco() {
         return preco;
     }
 
-    public void setPreco(@Positive BigInteger preco) {
+    public void setPreco(@Positive BigDecimal preco) {
         this.preco = preco;
     }
 

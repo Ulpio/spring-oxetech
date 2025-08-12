@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
     Page<Usuario> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
-    Page<Usuario> findByEmailContainingIgnoreCase(String email, Pageable pageable);
-    Page<Usuario> findByNomeContainingIgnoreCaseAndEmailContainingIgnoreCase(String nome,String email,Pageable pageable);
+    boolean existsByEmail(String email);
+    boolean existsByCpf(String cpf);
 }
