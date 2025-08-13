@@ -48,7 +48,7 @@ public class UsuarioController {
         return page.map(UsuarioDTO::new);
     }
 
-    @GetMapping("{/id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorID(@PathVariable Long id){
         return repository.findById(id)
                 .<ResponseEntity>map(u -> ResponseEntity.ok(new UsuarioDTO(u)))

@@ -1,30 +1,30 @@
 package com.example.persistencia.dto.pedido;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 import java.util.List;
 
 public class PedidoInputDTO {
     @NotNull
-    private  Long produtoId;
+    private Long usuarioId;
 
-    @Positive
+    @NotEmpty
     private List<PedidoItemInputDTO> itens;
 
-    public @NotNull Long getProdutoId() {
-        return produtoId;
+    public @NotNull Long getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setProdutoId(@NotNull Long produtoId) {
-        this.produtoId = produtoId;
+    public void setUsuarioId(@NotNull Long usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
-    public @Positive List<PedidoItemInputDTO> getItens() {
+    public @NotEmpty List<PedidoItemInputDTO> getItens() {
         return itens;
     }
 
-    public void setItens(@Positive List<PedidoItemInputDTO> itens) {
+    public void setItens(@NotEmpty List<PedidoItemInputDTO> itens) {
         this.itens = itens;
     }
 }

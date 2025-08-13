@@ -12,7 +12,7 @@ public class Categoria {
 
     @NotBlank @Size(min = 3)
     @Column(unique = true)
-    String nome;
+    private String nome;
 
     public Long getId() {
         return id;

@@ -17,12 +17,12 @@ public class Pedido {
     private Usuario usuario;
 
     @OneToMany(mappedBy = "pedido",cascade = CascadeType.ALL,orphanRemoval = true)
-    List<PedidoItem> itens;
+    private List<PedidoItem> itens;
 
     @Positive
-    BigDecimal total;
+    private BigDecimal total;
 
-    LocalDate dataCriacao;
+    private LocalDate dataCriacao;
 
     public Long getId() {
         return id;
