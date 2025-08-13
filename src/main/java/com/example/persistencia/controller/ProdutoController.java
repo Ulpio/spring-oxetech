@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
+@RestController
+@RequestMapping("/produtos")
 public class ProdutoController {
     private final ProdutoRepository repository;
     private final CategoriaRepository categoriaRepository;
@@ -56,7 +58,7 @@ public class ProdutoController {
                 .map(ProdutoDTO::new);
     }
 
-    @PutMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
         return repository.findById(id)
                 .<ResponseEntity>map(p -> ResponseEntity.ok(new ProdutoDTO(p)))

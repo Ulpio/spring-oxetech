@@ -29,15 +29,15 @@ public class CategoriaController {
         Categoria c = new Categoria();
         c.setNome(dto.getNome());
         Categoria salvo = repository.save(c);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Categoria());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CategoriaDTO(salvo));
     }
     @GetMapping
     public Page<CategoriaDTO> listar(Pageable pageable){
         return repository.findAll(pageable).map(CategoriaDTO::new);
     }
 
-    @GetMapping("{/id}")
-    ResponseEntity<?> filtrarPorID(@RequestParam Long id){
+    @GetMapping("/{id}")
+    ResponseEntity<?> filtrarPorID(@PathVariable Long id){
         return repository.findById(id)
                 .<ResponseEntity>map(c -> ResponseEntity.ok(new CategoriaDTO(c)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("categoria não encontrada"));
