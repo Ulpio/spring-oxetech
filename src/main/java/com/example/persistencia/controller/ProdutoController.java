@@ -50,13 +50,22 @@ public class ProdutoController {
     @GetMapping
     public Page<ProdutoDTO> listar(
             @RequestParam(required = false) String nome,
-            @RequestParam(required = false)BigDecimal precoMin,
+            @RequestParam(required = false) BigDecimal precoMin,
             @RequestParam(required = false) Long categoriaId,
             Pageable pageable
-    ){
-        return repository.filtrar(nome,precoMin,categoriaId,pageable)
-                .map(ProdutoDTO::new);
+    ) {
+        // normaliza nome: vazio/blank vira null
+        String nomeTrim = (nome != null && !nome.isBlank()) ? nome.trim() : null;
+
+        boolean semFiltros = (nomeTrim == null) && (precoMin == null) && (categoriaId == null);
+
+        Page<Produto> page = semFiltros
+                ? repository.findAll(pageable)
+                : repository.filtrar(nomeTrim, precoMin, categoriaId, pageable);
+
+        return page.map(ProdutoDTO::new);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){

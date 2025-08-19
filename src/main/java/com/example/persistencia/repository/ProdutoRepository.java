@@ -18,17 +18,16 @@ public interface ProdutoRepository extends JpaRepository<Produto,Long> {
     Page<Produto> findByCategoriaId(Long id,Pageable pageable);
 
     @Query("""
-            SELECT p FROM Produto p
-            WHERE (:nome IS NULL OR LOWER(p.nome) LIKE LOWER(CONCAT('%',:nome,'%')))
-            AND (:precoMin IS NULL OR p.preco > :precoMin)
-            AND (:categoriaID IS NULL OR p.categoria.id = :categoriaID)
-            """)
+        SELECT p FROM Produto p
+        WHERE (:nome IS NULL OR LOWER(p.nome) LIKE CONCAT('%', LOWER(:nome), '%'))
+          AND (:precoMin IS NULL OR p.preco >= :precoMin)
+          AND (:categoriaId IS NULL OR p.categoria.id = :categoriaId)
+        """)
     Page<Produto> filtrar(
             @Param("nome") String nome,
             @Param("precoMin") BigDecimal precoMin,
             @Param("categoriaId") Long categoriaId,
             Pageable pageable
     );
-
     boolean existsByCodigoBarras(String codigoBarras);
 }

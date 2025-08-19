@@ -20,7 +20,7 @@ public class Produto {
     private Integer quantidade;
 
     @Pattern(regexp = "\\d{13}") @Column(unique = true)
-    private String codigo_barras;
+    private String codigoBarras;
 
     @ManyToOne(optional = false)
     private Categoria categoria;
@@ -58,11 +58,11 @@ public class Produto {
     }
 
     public @Pattern(regexp = "\\d{13}") String getCodigo_barras() {
-        return codigo_barras;
+        return codigoBarras;
     }
 
     public void setCodigo_barras(@Pattern(regexp = "\\d{13}") String codigo_barras) {
-        this.codigo_barras = codigo_barras;
+        this.codigoBarras = codigo_barras;
     }
 
     public Categoria getCategoria() {
